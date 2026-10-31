@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de usuarios - SENA</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #39FF14;
+            --text-color: #ffffff;
+            --danger-color: #ff4d4d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            border: 1px solid #2a2a2a;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        input {
+            padding: 0.85rem 1rem;
+            background-color: #2a2a2a;
+            border: 1px solid #3f3f3f;
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            padding: 0.85rem;
+            background-color: var(--accent-color);
+            color: #121212;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .volver {
+            display: block;
+            text-align: center;
+            margin-top: 1.2rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .volver:hover {
+            text-decoration: underline;
+        }
+
+        #mensaje {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: var(--danger-color);
+            text-align: center;
+            word-break: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <section>
+        <h2>Registrarse</h2>
+        
+        <form id="registroForm">
+            <input id="username" placeholder="Nombre de usuario" required>
+            <input id="email" type="email" placeholder="Correo electrónico" required>
+            <input id="password" type="password" placeholder="Contraseña" required>
+            <button type="submit">Registrar</button>
+        </form>
+
+        <a href="/registro/" class="volver">← Volver al inicio de sesión</a>
+        
+        <p id="mensaje"></p>
+    </section>
+
+    <script>
+        document.getElementById("registroForm")
+        .addEventListener("submit", async (event) => {
+            event.preventDefault();
+            document.getElementById("mensaje").textContent = "";
+            
+            const datos = {
+                username: document.getElementById("username").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            };
+
+            try {
+                const respuesta = await fetch("/api/registro/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                if (respuesta.ok) {
+                    window.location.href = "/";
+                } else {
+                    const error = await respuesta.json();
+                    document.getElementById("mensaje").textContent = JSON.stringify(error);
+                }
+            } catch (err) {
+                document.getElementById("mensaje").textContent = "Error de conexión con el servidor.";
+            }
+        });
+    </script>
+</body>
+</html>
